@@ -25,8 +25,7 @@ namespace RentierApplication.Data.Entities
         [ForeignKey(nameof(RealEstateID))]
         public RealEstate RealEstateTenant { get; set; }
 
-        //public ICollection<RealEstate> RealEstates { get; set; }
-        //public RealEstate RealEstate { get; set; }
+        
     }
 
 
