@@ -59,6 +59,26 @@ namespace RentierApplication.Controllers
 
             return View();
         }
+        [Route("/RealEstates /{id}/Tenants/{id}")]
+        public async Task<IActionResult> Tenants(int? id)
+        {
+            if (id == null || _context.Tenants == null)
+            {
+                return NotFound();
+            }
+
+            var tenants = _context.Tenants
+                .Include(t => t.RealEstateTenant)
+                .Where(m => m.RealEstateID == id);
+            if (tenants == null)
+            {
+                return NotFound();
+            }
+
+            return View(tenants);
+        }
+
+
 
         // POST: RealEstates/Create
 
