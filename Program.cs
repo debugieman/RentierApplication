@@ -38,10 +38,13 @@ namespace RentierApplication
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseRouting();
-            
+            app.UseEndpoints(endpoint =>
 
-            app.UseAuthentication();
+            {
+
+
+
+                app.UseAuthentication();
                 app.UseAuthorization();
 
                 app.MapControllerRoute(
@@ -51,8 +54,9 @@ namespace RentierApplication
 
                 app.Run();
 
-            
 
-            }
+
+            });
+        }
     }
 }

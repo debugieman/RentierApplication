@@ -59,7 +59,8 @@ namespace RentierApplication.Controllers
 
             return View();
         }
-        [Route("/RealEstates /{id}/Tenants/{id}")]
+        //https://localhost:7179/RealEstates/Details/1013
+        [Route("/RealEstates/Details/RealEstateID/Tenants")]
         public async Task<IActionResult> Tenants(int? id)
         {
             if (id == null || _context.Tenants == null)
