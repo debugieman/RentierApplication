@@ -59,15 +59,16 @@ namespace RentierApplication.Controllers
 
             return View();
         }
-        //https://localhost:7179/RealEstates/Details/1013
-        [Route("/RealEstates/Details/RealEstateID/Tenants")]
+        
+        //[Route("/RealEstates/Details/RealEstateID/Tenants")]
         public async Task<IActionResult> Tenants(int? id)
         {
+
             if (id == null || _context.Tenants == null)
             {
                 return NotFound();
             }
-
+            ViewData["RealEstateID"] = id;
             var tenants = _context.Tenants
                 .Include(t => t.RealEstateTenant)
                 .Where(m => m.RealEstateID == id);
@@ -77,9 +78,8 @@ namespace RentierApplication.Controllers
             }
 
             return View(tenants);
+
         }
-
-
 
         // POST: RealEstates/Create
 

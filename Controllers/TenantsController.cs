@@ -48,11 +48,10 @@ namespace RentierApplication.Controllers
         }
 
         // GET: Tenants/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create()
+       
+        public IActionResult Create(int? id)
         {
-            ViewData["RealEstateID"] = new SelectList(_context.Tenants, "ID", "Name");
+            ViewData["RealEstateID"] = id;
 
             return View();
         }
@@ -63,21 +62,21 @@ namespace RentierApplication.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Route("")]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenants tenants)
+        public async Task<IActionResult> Create([Bind("Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenants tenants)
         { //wyzej bylo RealEstateID
 
 
             if (ModelState.IsValid)
             {
 
-           //     var realEstate = _context.RealEstates
-           //.SingleOrDefault(r => r.Id == viewModel.RealEstateId && r.UserId == User.Identity.Name);
-           //     return RedirectToAction(nameof(Tenants));
+                //     var realEstate = _context.RealEstates
+                //.SingleOrDefault(r => r.Id == viewModel.RealEstateId && r.UserId == User.Identity.Name);
+                //     return RedirectToAction(nameof(Tenants));
             }
 
             _context.Tenants.Add(tenants);
             _context.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Tenants", "RealEstates", new { id = tenants.RealEstateID });
 
 
 

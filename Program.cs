@@ -50,6 +50,9 @@ namespace RentierApplication
                 app.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                // userID/RealEstate/RealEstateID/tenants/TenantsID
+
                 app.MapRazorPages();
 
                 app.Run();
