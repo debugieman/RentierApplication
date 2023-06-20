@@ -16,6 +16,9 @@ namespace RentierApplication.Data.Entities
         public string Description { get; set; }
         public string UserId { get; set; }
 
+        // add teannt id 
+        public virtual ICollection<Tenants> Tenants { get; set; } 
+
        
 
 

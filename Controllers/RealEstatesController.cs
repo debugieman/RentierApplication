@@ -122,9 +122,8 @@ namespace RentierApplication.Controllers
             return View(realEstate);
         }
 
-        // POST: RealEstates/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,UserId")] RealEstate realEstate)
@@ -181,7 +180,7 @@ namespace RentierApplication.Controllers
 
         // POST: RealEstates/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.RealEstates == null)
@@ -203,10 +202,30 @@ namespace RentierApplication.Controllers
             return _context.RealEstates.Any(e => e.ID == id);
         }
 
-        
 
 
 
+        //DeleteTenantFromRealEstate
+
+        public async Task<IActionResult> DeleteTenantFromRealEstate(int realEstateID, int tenantID)
+        {
+            if (realEstateID == null || _context.RealEstates == null)
+            {
+                return NotFound();
+            }
+
+            var realEstate = await _context.RealEstates
+                .Include(r => r.ApplicationUser)
+                .FirstOrDefaultAsync(m => m.ID == realEstateID);
+            if (realEstate == null)
+            {
+                return NotFound();
+            }
+            realEstate.Tenants = realEstate.Tenants.Where(x => x.ID != tenantID).ToList();
+            //realEstate.Tenants.Remove(_context.Tenants.Where(x=>x.ID==tenantID).First());
+            _context.SaveChangesAsync();
+            return View(realEstate);
+        }
 
 
 

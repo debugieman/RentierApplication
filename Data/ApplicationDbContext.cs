@@ -16,15 +16,16 @@ namespace RentierApplication.Data
         public DbSet<Tenants>? Tenants { get; set; }
         //RentierApplication.Data.Entities.Tenants
 
-      
-
-
-        }
+        
 
 
 
+    }
 
-    
+
+
+
+
 
 }
 

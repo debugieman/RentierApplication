@@ -10,7 +10,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create" asp-controller="Tenants">Create New Tenant</a> 
+    
     <input type="button" value="Create new tenant" onclick="location.href='@Url.Action("Create", "Tenants", new{id=id})'" />
     
 </p>
@@ -63,7 +63,9 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                   @* <a asp-action="DeleteTenantFromRealEstate" asp-route-id="@item.ID">Delete</a>*@
+                    @Html.ActionLink("Delete", "DeleteTenantFromRealEstate", "RealEstates",new {realEstateID = item.RealEstateID, tenantID = item.ID})
+
                 </td>
             </tr>
         }
