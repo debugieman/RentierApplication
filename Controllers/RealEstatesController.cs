@@ -58,6 +58,8 @@ namespace RentierApplication.Controllers
 
             return View();
         }
+
+        //consider moving this method to tenant controller 
         //https://localhost:7179/RealEstates/Details/1013
         [Route("/RealEstates/Details/RealEstateID/Tenants")]
         public async Task<IActionResult> Tenants(int? id)
