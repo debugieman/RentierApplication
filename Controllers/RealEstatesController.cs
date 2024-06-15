@@ -27,8 +27,8 @@ namespace RentierApplication.Controllers
         {
             var userEmail = User.Identity.Name;
 
-            var applicationDbContext = _context.RealEstates.Include(r => r.ApplicationUser);
-            var userRealEstates = applicationDbContext.Where(x => x.ApplicationUser.Email == userEmail);
+            var userRealEstates = _context.RealEstates.Include(t => t.Tenants);//Where(r => r.UserId == userEmail);
+            
             return View(await userRealEstates.ToListAsync());
         }
 
@@ -40,8 +40,7 @@ namespace RentierApplication.Controllers
                 return NotFound();
             }
 
-            var realEstate = await _context.RealEstates
-                .Include(r => r.ApplicationUser)
+            var realEstate = await _context.RealEstates.Include(t => t.Tenants)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (realEstate == null)
             {
@@ -134,6 +133,12 @@ namespace RentierApplication.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove(nameof(RealEstate.UserId));
+
+
+            var userEmail = User.Identity.Name;
+            realEstate.UserId = userEmail;
+
             if (ModelState.IsValid)
             {
                 try
@@ -166,8 +171,7 @@ namespace RentierApplication.Controllers
                 return NotFound();
             }
 
-            var realEstate = await _context.RealEstates
-                .Include(r => r.ApplicationUser)
+            var realEstate = await _context.RealEstates                
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (realEstate == null)
             {

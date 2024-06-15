@@ -36,6 +36,7 @@ namespace RentierApplication
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            
 
             app.UseRouting();
             app.UseEndpoints(endpoint =>
@@ -43,7 +44,7 @@ namespace RentierApplication
             {
 
 
-
+                
                 app.UseAuthentication();
                 app.UseAuthorization();
 

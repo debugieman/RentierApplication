@@ -30,6 +30,10 @@
         </dd>
         
     </dl>
+
+        <div style="border-style:solid">
+        @await Html.PartialAsync("~/Views/Tenants/Index.cshtml", Model.Tenants)
+</div>  
     <button type="button" class="btn btn-light" onclick="location.href='@Url.Action("Index", "Tenants")'">Tenants</button>;
 
     

@@ -22,10 +22,8 @@ namespace RentierApplication.Controllers
         // GET: Tenants
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tenants.ToList();
-                //Include(t => t.RealEstateTenant);
-
-            return View( applicationDbContext);
+            var applicationDbContext = _context.Tenants.Include(t => t.RealEstateTenant);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Tenants/Details/5
@@ -48,12 +46,9 @@ namespace RentierApplication.Controllers
         }
 
         // GET: Tenants/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Create()
         {
-            ViewData["RealEstateID"] = new SelectList(_context.Tenants, "ID", "Name");
-
+            ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name");
             return View();
         }
 
@@ -62,27 +57,14 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Route("")]
         public async Task<IActionResult> Create([Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenants tenants)
-        { //wyzej bylo RealEstateID
-
-
+        {
             if (ModelState.IsValid)
             {
-
-           //     var realEstate = _context.RealEstates
-           //.SingleOrDefault(r => r.Id == viewModel.RealEstateId && r.UserId == User.Identity.Name);
-           //     return RedirectToAction(nameof(Tenants));
+                _context.Add(tenants);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            _context.Tenants.Add(tenants);
-            _context.SaveChanges();
-            return RedirectToAction("Index");
-
-
-
-            //tenants.RealEstateID
-
             ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenants.RealEstateID);
             return View(tenants);
         }
@@ -173,14 +155,14 @@ namespace RentierApplication.Controllers
             {
                 _context.Tenants.Remove(tenants);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TenantsExists(int id)
         {
-            return (_context.Tenants?.Any(e => e.ID == id)).GetValueOrDefault();
+          return (_context.Tenants?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }
