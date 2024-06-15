@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace RentierApplication.Controllers
 {
+    [ApiController/"[controller]"]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
