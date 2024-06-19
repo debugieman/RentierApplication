@@ -2,5 +2,8 @@
 {
     public class Payments
     {
+        public int PaymentID { get; set; }
+        public DateTime? TimeOfPayment { get; set; }
+
     }
 }
