@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentierApplication.Data;
 using RentierApplication.Data.Entities;
-using RentierApplication.Data.Migrations;
 
 namespace RentierApplication.Controllers
 {
@@ -72,6 +67,7 @@ namespace RentierApplication.Controllers
             var tenants = _context.Tenants
                 .Include(t => t.RealEstateTenant)
                 .Where(m => m.RealEstateID == id);
+            
             if (tenants == null)
             {
                 return NotFound();

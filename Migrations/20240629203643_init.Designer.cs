@@ -9,20 +9,21 @@ using RentierApplication.Data;
 
 #nullable disable
 
-namespace RentierApplication.Data.Migrations
+namespace RentierApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230228205652_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240629203643_init")]
+    partial class init
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.11")
+                .HasAnnotation("ProductVersion", "7.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -57,7 +58,7 @@ namespace RentierApplication.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -147,7 +148,7 @@ namespace RentierApplication.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -226,6 +227,124 @@ namespace RentierApplication.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("RentierApplication.Data.Entities.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("MonthlyIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RealEstateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RealEstateId");
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.RealEstate", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("PaymentId");
+
+                    b.ToTable("RealEstates");
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.Tenant", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("MoneyObligation")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RealEstateID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Surety")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RealEstateID");
+
+                    b.ToTable("Tenants");
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId");
+
+                    b.ToTable("Transactions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -275,6 +394,60 @@ namespace RentierApplication.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.Payment", b =>
+                {
+                    b.HasOne("RentierApplication.Data.Entities.RealEstate", "RealEstate")
+                        .WithMany()
+                        .HasForeignKey("RealEstateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RealEstate");
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.RealEstate", b =>
+                {
+                    b.HasOne("RentierApplication.Data.Entities.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.Tenant", b =>
+                {
+                    b.HasOne("RentierApplication.Data.Entities.RealEstate", "RealEstateTenant")
+                        .WithMany("Tenants")
+                        .HasForeignKey("RealEstateID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RealEstateTenant");
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.Transaction", b =>
+                {
+                    b.HasOne("RentierApplication.Data.Entities.Payment", "Payment")
+                        .WithMany("Transactions")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.Payment", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("RentierApplication.Data.Entities.RealEstate", b =>
+                {
+                    b.Navigation("Tenants");
                 });
 #pragma warning restore 612, 618
         }

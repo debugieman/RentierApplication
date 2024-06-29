@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentierApplication.Data;
@@ -57,7 +53,7 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenants tenants)
+        public async Task<IActionResult> Create([Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenant tenants)
         {
             if (ModelState.IsValid)
             {
@@ -91,7 +87,7 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenants tenants)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenant tenants)
         {
             if (id != tenants.ID)
             {
