@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentierApplication.Data;
 using RentierApplication.Data.Entities;
+using RentierApplication.ViewModels;
+using System.Runtime.CompilerServices;
 
 namespace RentierApplication.Controllers
 {
@@ -31,8 +33,8 @@ namespace RentierApplication.Controllers
             }
 
             var tenants = await _context.Tenants
-                .Include(t => t.RealEstateTenant)
-                .FirstOrDefaultAsync(m => m.ID == id);
+                
+                .FirstOrDefaultAsync(tenant => tenant.ID == id);
             if (tenants == null)
             {
                 return NotFound();
@@ -53,10 +55,17 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenant tenants)
+        public async Task<IActionResult> Create([Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] TenantViewModel model )
         {
             if (ModelState.IsValid)
             {
+                var tenant = new Tenant() { 
+                    Name = model.Name,
+                    Email = model.Email,
+                    //uzupelnij 
+                    
+                };
+
                 _context.Add(tenants);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
