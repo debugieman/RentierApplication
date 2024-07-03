@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RentierApplication.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class paymentRealEstateIDNullable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -162,7 +162,7 @@ namespace RentierApplication.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RealEstateId = table.Column<int>(type: "int", nullable: false),
+                    RealEstateId = table.Column<int>(type: "int", nullable: true),
                     MonthlyIncome = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
@@ -303,8 +303,7 @@ namespace RentierApplication.Migrations
                 table: "Payments",
                 column: "RealEstateId",
                 principalTable: "RealEstates",
-                principalColumn: "ID",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "ID");
         }
 
         /// <inheritdoc />

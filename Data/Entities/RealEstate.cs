@@ -15,7 +15,7 @@ namespace RentierApplication.Data.Entities
 
         public virtual ICollection<Tenant> Tenants { get; set; }
         [ForeignKey("Payment")]
-        public int PaymentId { get; set; }
+        public int? PaymentId { get; set; }
         public virtual Payment Payment { get; set; }
     }
 }

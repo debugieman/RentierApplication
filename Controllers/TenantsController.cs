@@ -55,23 +55,26 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] TenantViewModel model )
+        public async Task<IActionResult> Create(TenantCreateViewModel tenantToAdd )
         {
+            var tenant = new Tenant()
+            {
+                Name = tenantToAdd.Name,
+                Email = tenantToAdd.Email,
+                Surname = tenantToAdd.Surname,
+                MoneyObligation = 0,
+                Surety = tenantToAdd.Surety,
+                RealEstateID = tenantToAdd.RealEstateID,
+            };
+
             if (ModelState.IsValid)
             {
-                var tenant = new Tenant() { 
-                    Name = model.Name,
-                    Email = model.Email,
-                    //uzupelnij 
-                    
-                };
-
-                _context.Add(tenants);
+                _context.Add(tenant);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenants.RealEstateID);
-            return View(tenants);
+            ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenant.RealEstateID);
+            return View(tenantToAdd);
         }
 
         // GET: Tenants/Edit/5

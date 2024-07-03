@@ -8,7 +8,7 @@ namespace RentierApplication.Data.Entities
         [Key]
         public int Id { get; set; }
         [ForeignKey("RealEstate")]
-        public int RealEstateId { get; set; }      
+        public int? RealEstateId { get; set; }      
         
         public virtual RealEstate RealEstate { get; set; }        
         public decimal MonthlyIncome { get; set; }

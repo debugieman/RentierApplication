@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RentierApplication.ViewModels
 {
-    public class TenantViewModel
+    public class TenantCreateViewModel
     {        
         public int ID { get; set; }
         

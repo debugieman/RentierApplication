@@ -12,8 +12,8 @@ using RentierApplication.Data;
 namespace RentierApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240629203643_init")]
-    partial class init
+    [Migration("20240703195153_PaymentEditRealEstateIDNullable")]
+    partial class PaymentEditRealEstateIDNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -238,7 +238,7 @@ namespace RentierApplication.Migrations
                     b.Property<decimal>("MonthlyIncome")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("RealEstateId")
+                    b.Property<int?>("RealEstateId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -264,7 +264,7 @@ namespace RentierApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PaymentId")
+                    b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -400,9 +400,7 @@ namespace RentierApplication.Migrations
                 {
                     b.HasOne("RentierApplication.Data.Entities.RealEstate", "RealEstate")
                         .WithMany()
-                        .HasForeignKey("RealEstateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RealEstateId");
 
                     b.Navigation("RealEstate");
                 });
@@ -411,9 +409,7 @@ namespace RentierApplication.Migrations
                 {
                     b.HasOne("RentierApplication.Data.Entities.Payment", "Payment")
                         .WithMany()
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PaymentId");
 
                     b.Navigation("Payment");
                 });

@@ -1,5 +1,5 @@
 ﻿@using RentierApplication.ViewModels
-@model TenantViewModel
+@model TenantCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -27,11 +27,6 @@
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MoneyObligation" class="control-label"></label>
-                <input asp-for="MoneyObligation" class="form-control" />
-                <span asp-validation-for="MoneyObligation" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Surety" class="control-label"></label>
