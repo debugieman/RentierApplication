@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using RentierApplication.Data;
 using RentierApplication.Data.Entities;
 using RentierApplication.ViewModels;
-using System.Runtime.CompilerServices;
+using Exception = System.Exception;
+
 
 namespace RentierApplication.Controllers
 {
@@ -51,11 +52,9 @@ namespace RentierApplication.Controllers
         }
 
         // POST: Tenants/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TenantCreateViewModel tenantToAdd )
+        public async Task<IActionResult> Create(TenantCreateViewModel tenantToAdd)
         {
             var tenant = new Tenant()
             {
@@ -74,10 +73,11 @@ namespace RentierApplication.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenant.RealEstateID);
-            return View(tenantToAdd);
+            return View((TenantCreateViewModel)tenantToAdd);
         }
-
+        // ON GET TYLKO ID !!!
         // GET: Tenants/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Tenants == null)
@@ -93,15 +93,25 @@ namespace RentierApplication.Controllers
             ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenants.RealEstateID);
             return View(tenants);
         }
+        
 
-        // POST: Tenants/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,Email,MoneyObligation,Surety,RealEstateID")] Tenant tenants)
+        public async Task<IActionResult> Edit(int id,  TenantEditViewModel tenantToEdit)
         {
-            if (id != tenants.ID)
+            var existingTenant = await _context.Tenants.FindAsync(id);
+            if (existingTenant == null)
+            {
+                return NotFound();
+            }
+            existingTenant.Name = tenantToEdit.Name;
+            existingTenant.Email = tenantToEdit.Email;
+            existingTenant.Surname = tenantToEdit.Surname;
+            existingTenant.MoneyObligation = tenantToEdit.MoneyObligation;
+            existingTenant.Surety = tenantToEdit.Surety;
+            existingTenant.RealEstateID = tenantToEdit.RealEstateID;
+
+            if (id != tenantToEdit.ID)
             {
                 return NotFound();
             }
@@ -110,43 +120,42 @@ namespace RentierApplication.Controllers
             {
                 try
                 {
-                    _context.Update(tenants);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!TenantsExists(tenants.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return UnprocessableEntity(ex);
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenants.RealEstateID);
-            return View(tenants);
+            ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name",  tenantToEdit.RealEstateID);
+            return View();
         }
 
         // GET: Tenants/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Tenants == null)
-            {
-                return NotFound();
-            }
-
-            var tenants = await _context.Tenants
+            var existingTenant =  await _context.Tenants
                 .Include(t => t.RealEstateTenant)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (tenants == null)
+            if (existingTenant == null)
             {
                 return NotFound();
             }
 
-            return View(tenants);
+            TenantDeleteViewModel tenantToDelete = new TenantDeleteViewModel()
+            {
+                Surname = existingTenant.Surname,
+                Name =  existingTenant.Name,
+                Email = existingTenant.Email,
+                MoneyObligation = existingTenant.MoneyObligation,
+                Surety = existingTenant.Surety,
+                ID = existingTenant.ID
+            };
+
+            //return View(TenantDeleteViewModel tenantToDelete);
+            return View(tenantToDelete);
         }
 
         // POST: Tenants/Delete/5
@@ -154,23 +163,17 @@ namespace RentierApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Tenants == null)
+            var existingTenant = await _context.Tenants
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (existingTenant == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Tenants'  is null.");
+                return NotFound();
             }
-            var tenants = await _context.Tenants.FindAsync(id);
-            if (tenants != null)
-            {
-                _context.Tenants.Remove(tenants);
-            }
-            
+
+            _context.Tenants.Remove(existingTenant);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
 
-        private bool TenantsExists(int id)
-        {
-          return (_context.Tenants?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }
