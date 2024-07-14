@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentierApplication.Data;
 using RentierApplication.Data.Entities;
+using RentierApplication.ViewModels;
 
 namespace RentierApplication.Controllers
 {
@@ -30,7 +31,9 @@ namespace RentierApplication.Controllers
         // GET: RealEstates/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.RealEstates == null)
+            
+
+            if (id== null || _context.RealEstates == null)
             {
                 return NotFound();
             }
@@ -84,9 +87,20 @@ namespace RentierApplication.Controllers
         [ValidateAntiForgeryToken]
 
         
-        public async Task<IActionResult> Create([Bind("ID,Name,Description")] RealEstate realEstate)
+        public async Task<IActionResult> Create(RealEstateCreateViewModel  realEstateToAdd )
         {
+            var realEstate = new RealEstate()
+            {
+                
+                Name = realEstateToAdd.Name,
+                Description = realEstateToAdd.Description,
+                UserId = realEstateToAdd.UserId,
+                
+             };
 
+
+
+        
 
 
             if (ModelState.IsValid)
@@ -94,10 +108,10 @@ namespace RentierApplication.Controllers
                 
                 return RedirectToAction(nameof(Index));
             }
-           
-            realEstate.UserId =  StaticData.UserId;
+           // nie podoba mi sie ta linia, gdzie uzywa sie user id 
+            //realEstate.UserId =  StaticData.UserId;
             _context.RealEstates.Add(realEstate);
-            _context.SaveChanges();
+            _context.SaveChangesAsync();
             
             return RedirectToAction("Index");
         }
@@ -124,44 +138,45 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,UserId")] RealEstate realEstate)
+        public async Task<IActionResult> Edit(int id, RealEstateEditViewModel REToEdit)
         {
-            if (id != realEstate.ID)
+            var existingRE = await _context.RealEstates.FindAsync(id);
+
+            if (existingRE ==  null) 
             {
                 return NotFound();
             }
-
-            ModelState.Remove(nameof(RealEstate.UserId));
-
-
-            var userEmail = User.Identity.Name;
-            realEstate.UserId = userEmail;
+            existingRE.Name =  REToEdit.Name;
+            existingRE.Description = REToEdit.Description;        
+                     
+                                   
 
             if (ModelState.IsValid)
             {
                 try
-                {
-                    _context.Update(realEstate);
+                {                   
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RealEstateExists(realEstate.ID))
+                    if (id!= existingRE.ID)
                     {
                         return NotFound();
                     }
                     else
                     {
                         throw;
-                    }
+                    };
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", realEstate.UserId);
-            return View(realEstate);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", existingRE.UserId);
+            return View(REToEdit);
+        
         }
 
         // GET: RealEstates/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.RealEstates == null)
@@ -176,7 +191,12 @@ namespace RentierApplication.Controllers
                 return NotFound();
             }
 
-            return View(realEstate);
+            RealEstateDeleteViewModel RealEstateToDelete = new RealEstateDeleteViewModel()
+            {
+                Name  = realEstate.Name,
+                Description = realEstate.Description,
+            };
+            return View();
         }
         
        
@@ -190,20 +210,16 @@ namespace RentierApplication.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.RealEstates'  is null.");
             }
-            var realEstate = await _context.RealEstates.FindAsync(id);
-            if (realEstate != null)
-            {
-                _context.RealEstates.Remove(realEstate);
-            }
-
+            var realEstate = await _context.RealEstates.FindAsync(id);            
+            _context.RealEstates.Remove(realEstate);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RealEstateExists(int id)
-        {
-            return _context.RealEstates.Any(e => e.ID == id);
-        }
+        //private bool RealEstateExists(int id)
+        //{
+        //    return _context.RealEstates.Any(e => e.ID == id);
+        //}
 
         
 

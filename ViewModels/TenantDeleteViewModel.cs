@@ -13,8 +13,7 @@ namespace RentierApplication.ViewModels
         public string Email { get; set; }
 
         public decimal MoneyObligation { get; set; }
-        public decimal Surety { get; set; }
-       
+        public decimal Surety { get; set; }       
              
     }
 }
