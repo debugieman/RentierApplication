@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace RentierApplication.Controllers
     public class RealEstatesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public RealEstatesController(ApplicationDbContext context)
+        public RealEstatesController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            this.userManager = userManager;
         }
 
         // GET: RealEstates
@@ -91,27 +94,18 @@ namespace RentierApplication.Controllers
         {
             var realEstate = new RealEstate()
             {
-                
+                ID = realEstateToAdd.ID,
                 Name = realEstateToAdd.Name,
                 Description = realEstateToAdd.Description,
-                UserId = realEstateToAdd.UserId,
+                UserId = userManager.GetUserId(User),
                 
-             };
+             };       
 
-
-
-        
-
-
-            if (ModelState.IsValid)
-            {
-                
-                return RedirectToAction(nameof(Index));
-            }
+            
            // nie podoba mi sie ta linia, gdzie uzywa sie user id 
             //realEstate.UserId =  StaticData.UserId;
-            _context.RealEstates.Add(realEstate);
-            _context.SaveChangesAsync();
+             _context.RealEstates.Add(realEstate);
+            await _context.SaveChangesAsync();
             
             return RedirectToAction("Index");
         }
