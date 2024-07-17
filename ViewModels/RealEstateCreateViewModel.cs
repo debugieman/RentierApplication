@@ -1,7 +1,4 @@
-﻿using RentierApplication.DAL.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace RentierApplication.ViewModels
+﻿namespace RentierApplication.ViewModels
 {
     public class RealEstateCreateViewModel
     {
