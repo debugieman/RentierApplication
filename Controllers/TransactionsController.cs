@@ -5,96 +5,95 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using RentierApplication.DAL.Entities;
 using RentierApplication.Data;
-
+using RentierApplication.DAL.Entities;
 
 namespace RentierApplication.Controllers
 {
-    public class PaymentsController : Controller
+    public class TransactionsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public PaymentsController(ApplicationDbContext context)
+        public TransactionsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Payments
+        // GET: Transactions
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Payments.Include(p => p.RealEstate);
+            var applicationDbContext = _context.Transactions.Include(t => t.Payment);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Payments/Details/5
+        // GET: Transactions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Payments == null)
+            if (id == null || _context.Transactions == null)
             {
                 return NotFound();
             }
 
-            var payment = await _context.Payments
-                .Include(p => p.RealEstate)
+            var transaction = await _context.Transactions
+                .Include(t => t.Payment)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (payment == null)
+            if (transaction == null)
             {
                 return NotFound();
             }
 
-            return View(payment);
+            return View(transaction);
         }
 
-        // GET: Payments/Create
+        // GET: Transactions/Create
         public IActionResult Create()
         {
-            ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name");
+            ViewData["PaymentId"] = new SelectList(_context.Payments, "Id", "Id");
             return View();
         }
 
-        // POST: Payments/Create
+        // POST: Transactions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RealEstateId,MonthlyIncome")] Payment payment)
+        public async Task<IActionResult> Create([Bind("Id,Date,Amount,Description,Type,PaymentId")] Transaction transaction)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(payment);
+                _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name", payment.RealEstateId);
-            return View(payment);
+            ViewData["PaymentId"] = new SelectList(_context.Payments, "Id", "Id", transaction.PaymentId);
+            return View(transaction);
         }
 
-        // GET: Payments/Edit/5
+        // GET: Transactions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Payments == null)
+            if (id == null || _context.Transactions == null)
             {
                 return NotFound();
             }
 
-            var payment = await _context.Payments.FindAsync(id);
-            if (payment == null)
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction == null)
             {
                 return NotFound();
             }
-            ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name", payment.RealEstateId);
-            return View(payment);
+            ViewData["PaymentId"] = new SelectList(_context.Payments, "Id", "Id", transaction.PaymentId);
+            return View(transaction);
         }
 
-        // POST: Payments/Edit/5
+        // POST: Transactions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RealEstateId,MonthlyIncome")] Payment payment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Date,Amount,Description,Type,PaymentId")] Transaction transaction)
         {
-            if (id != payment.Id)
+            if (id != transaction.Id)
             {
                 return NotFound();
             }
@@ -103,12 +102,12 @@ namespace RentierApplication.Controllers
             {
                 try
                 {
-                    _context.Update(payment);
+                    _context.Update(transaction);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PaymentExists(payment.Id))
+                    if (!TransactionExists(transaction.Id))
                     {
                         return NotFound();
                     }
@@ -119,51 +118,51 @@ namespace RentierApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name", payment.RealEstateId);
-            return View(payment);
+            ViewData["PaymentId"] = new SelectList(_context.Payments, "Id", "Id", transaction.PaymentId);
+            return View(transaction);
         }
 
-        // GET: Payments/Delete/5
+        // GET: Transactions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Payments == null)
+            if (id == null || _context.Transactions == null)
             {
                 return NotFound();
             }
 
-            var payment = await _context.Payments
-                .Include(p => p.RealEstate)
+            var transaction = await _context.Transactions
+                .Include(t => t.Payment)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (payment == null)
+            if (transaction == null)
             {
                 return NotFound();
             }
 
-            return View(payment);
+            return View(transaction);
         }
 
-        // POST: Payments/Delete/5
+        // POST: Transactions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Payments == null)
+            if (_context.Transactions == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Payments'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Transactions'  is null.");
             }
-            var payment = await _context.Payments.FindAsync(id);
-            if (payment != null)
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction != null)
             {
-                _context.Payments.Remove(payment);
+                _context.Transactions.Remove(transaction);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PaymentExists(int id)
+        private bool TransactionExists(int id)
         {
-          return (_context.Payments?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Transactions?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using RentierApplication.Data.Entities;
+﻿using RentierApplication.DAL.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RentierApplication.ViewModels

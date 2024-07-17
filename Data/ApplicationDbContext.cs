@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RentierApplication.Data.Entities;
+using RentierApplication.DAL.Entities;
 
 namespace RentierApplication.Data
 {

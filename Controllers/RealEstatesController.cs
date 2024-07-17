@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentierApplication.Data;
-using RentierApplication.Data.Entities;
+using RentierApplication.DAL.Entities;
 using RentierApplication.ViewModels;
 
 namespace RentierApplication.Controllers

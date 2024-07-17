@@ -227,7 +227,7 @@ namespace RentierApplication.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.Payment", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.Payment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,7 +248,7 @@ namespace RentierApplication.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.RealEstate", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.RealEstate", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -278,7 +278,7 @@ namespace RentierApplication.Migrations
                     b.ToTable("RealEstates");
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.Tenant", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.Tenant", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -314,7 +314,7 @@ namespace RentierApplication.Migrations
                     b.ToTable("Tenants");
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.Transaction", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.Transaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -396,18 +396,18 @@ namespace RentierApplication.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.Payment", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.Payment", b =>
                 {
-                    b.HasOne("RentierApplication.Data.Entities.RealEstate", "RealEstate")
+                    b.HasOne("RentierApplication.DAL.Entities.RealEstate", "RealEstate")
                         .WithMany()
                         .HasForeignKey("RealEstateId");
 
                     b.Navigation("RealEstate");
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.RealEstate", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.RealEstate", b =>
                 {
-                    b.HasOne("RentierApplication.Data.Entities.Payment", "Payment")
+                    b.HasOne("RentierApplication.DAL.Entities.Payment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -416,9 +416,9 @@ namespace RentierApplication.Migrations
                     b.Navigation("Payment");
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.Tenant", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.Tenant", b =>
                 {
-                    b.HasOne("RentierApplication.Data.Entities.RealEstate", "RealEstateTenant")
+                    b.HasOne("RentierApplication.DAL.Entities.RealEstate", "RealEstateTenant")
                         .WithMany("Tenants")
                         .HasForeignKey("RealEstateID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -427,9 +427,9 @@ namespace RentierApplication.Migrations
                     b.Navigation("RealEstateTenant");
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.Transaction", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.Transaction", b =>
                 {
-                    b.HasOne("RentierApplication.Data.Entities.Payment", "Payment")
+                    b.HasOne("RentierApplication.DAL.Entities.Payment", "Payment")
                         .WithMany("Transactions")
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -438,12 +438,12 @@ namespace RentierApplication.Migrations
                     b.Navigation("Payment");
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.Payment", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.Payment", b =>
                 {
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("RentierApplication.Data.Entities.RealEstate", b =>
+            modelBuilder.Entity("RentierApplication.DAL.Entities.RealEstate", b =>
                 {
                     b.Navigation("Tenants");
                 });
