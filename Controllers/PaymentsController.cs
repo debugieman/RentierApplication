@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentierApplication.DAL.Entities;
 using RentierApplication.Data;
+using RentierApplication.ViewModels;
 
 
 namespace RentierApplication.Controllers
@@ -33,6 +34,7 @@ namespace RentierApplication.Controllers
 
             var payment = await _context.Payments
                 .Include(p => p.RealEstate)
+                .Include(p => p.Transactions)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (payment == null)
             {
@@ -54,16 +56,24 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RealEstateId,MonthlyIncome")] Payment payment)
+        
+        public async Task<IActionResult> Create(PaymentCreateViewModel paymentToAdd)
         {
-            if (ModelState.IsValid)
+            var payment = new Payment()
             {
+                Id = paymentToAdd.Id,
+                RealEstateId = paymentToAdd.RealEstateId,
+                MonthlyIncome = paymentToAdd.MonthlyIncome,
+            };
+         
+                        
+            
                 _context.Add(payment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
+            
             ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name", payment.RealEstateId);
-            return View(payment);
+            return View();
         }
 
         // GET: Payments/Edit/5
@@ -88,54 +98,65 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RealEstateId,MonthlyIncome")] Payment payment)
+        public async Task<IActionResult> Edit(int id, PaymentEditViewModel paymentToEdit)
         {
-            if (id != payment.Id)
+            var existingPayment = await _context.Payments.FindAsync(id);
+            
+            
+            existingPayment.MonthlyIncome = paymentToEdit.MonthlyIncome;
+
+
+
+
+            if (id != existingPayment.Id)
             {
                 return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(payment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PaymentExists(payment.Id))
+            }            
+                
+                
+            
+            await _context.SaveChangesAsync();
+                
+                
+                
+                    if (!PaymentExists(existingPayment.Id))
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                    
+                
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name", payment.RealEstateId);
-            return View(payment);
+            
+            ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name", existingPayment.RealEstateId);
+            return View(existingPayment);
         }
 
         // GET: Payments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            var payment = await _context.Payments
+                .Include(p => p.RealEstate)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            PaymentDeleteViewModel paymentToDelete = new PaymentDeleteViewModel()
+            {
+                Id = payment.Id,
+                RealEstateId = payment.RealEstateId,
+                MonthlyIncome = payment.MonthlyIncome,
+
+            };
             if (id == null || _context.Payments == null)
             {
                 return NotFound();
             }
 
-            var payment = await _context.Payments
-                .Include(p => p.RealEstate)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (payment == null)
             {
                 return NotFound();
             }
 
-            return View(payment);
+            return View();
         }
 
         // POST: Payments/Delete/5
@@ -143,11 +164,13 @@ namespace RentierApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var payment = await _context.Payments.FindAsync(id);
+
             if (_context.Payments == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Payments'  is null.");
             }
-            var payment = await _context.Payments.FindAsync(id);
+            
             if (payment != null)
             {
                 _context.Payments.Remove(payment);

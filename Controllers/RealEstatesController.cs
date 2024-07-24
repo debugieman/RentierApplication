@@ -26,7 +26,7 @@ namespace RentierApplication.Controllers
         {
             var userEmail = User.Identity.Name;
 
-            var userRealEstates = _context.RealEstates.Include(t => t.Tenants);//Where(r => r.UserId == userEmail);
+            var userRealEstates = _context.RealEstates.Include(t => t.Tenants);
             
             return View(await userRealEstates.ToListAsync());
         }
@@ -209,18 +209,5 @@ namespace RentierApplication.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        //private bool RealEstateExists(int id)
-        //{
-        //    return _context.RealEstates.Any(e => e.ID == id);
-        //}
-
-        
-
-
-
-
-
-
     }
 }
