@@ -5,7 +5,8 @@
 }
 
 <h1>Details</h1>
-<a href="@Url.Action("Index", "Tansaction")">Go to transactions</a>
+//tu przekazać id paymentu 
+<a href="@Url.Action("Index", "Tansaction", new {PaymentId = Model.Id})">Go to transactions</a>
 <div>
     <h4>Payment</h4>
     <hr />
@@ -25,7 +26,14 @@
     </dl>
 </div>
 <div style="border-style:solid">
+   @*  @{
+        var TransactionVIewModel = null;
+        TransactionVIewModel.PaymentId = Model.Id;
+    }  *@
+
+
     @await Html.PartialAsync("~/Views/Transactions/Index.cshtml", Model.Transactions)
+    @* Zmienić  model na  viewModel, z polem paymentID. Payment id   *@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |

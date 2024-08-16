@@ -3,9 +3,9 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Identity;
 
 namespace RentierApplication.Areas.Identity.Pages.Account
 {

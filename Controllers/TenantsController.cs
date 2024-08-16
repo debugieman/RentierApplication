@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using RentierApplication.Data;
 using RentierApplication.DAL.Entities;
+using RentierApplication.Data;
 using RentierApplication.ViewModels;
 using Exception = System.Exception;
-
 
 namespace RentierApplication.Controllers
 {
@@ -34,7 +33,7 @@ namespace RentierApplication.Controllers
             }
 
             var tenants = await _context.Tenants
-                
+
                 .FirstOrDefaultAsync(tenant => tenant.ID == id);
             if (tenants == null)
             {
@@ -75,6 +74,7 @@ namespace RentierApplication.Controllers
             ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenant.RealEstateID);
             return View((TenantCreateViewModel)tenantToAdd);
         }
+
         // ON GET TYLKO ID !!!
         // GET: Tenants/Edit/5
         [HttpGet]
@@ -93,11 +93,10 @@ namespace RentierApplication.Controllers
             ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenants.RealEstateID);
             return View(tenants);
         }
-        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,  TenantEditViewModel tenantToEdit)
+        public async Task<IActionResult> Edit(int id, TenantEditViewModel tenantToEdit)
         {
             var existingTenant = await _context.Tenants.FindAsync(id);
             if (existingTenant == null)
@@ -128,7 +127,7 @@ namespace RentierApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name",  tenantToEdit.RealEstateID);
+            ViewData["RealEstateID"] = new SelectList(_context.RealEstates, "ID", "Name", tenantToEdit.RealEstateID);
             return View();
         }
 
@@ -136,7 +135,7 @@ namespace RentierApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            var existingTenant =  await _context.Tenants
+            var existingTenant = await _context.Tenants
                 .Include(t => t.RealEstateTenant)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (existingTenant == null)
@@ -147,7 +146,7 @@ namespace RentierApplication.Controllers
             TenantDeleteViewModel tenantToDelete = new TenantDeleteViewModel()
             {
                 Surname = existingTenant.Surname,
-                Name =  existingTenant.Name,
+                Name = existingTenant.Name,
                 Email = existingTenant.Email,
                 MoneyObligation = existingTenant.MoneyObligation,
                 Surety = existingTenant.Surety,
@@ -173,7 +172,6 @@ namespace RentierApplication.Controllers
             _context.Tenants.Remove(existingTenant);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-
         }
     }
 }

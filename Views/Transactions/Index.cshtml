@@ -7,7 +7,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-controller = "Transactions" asp-action="Create" asp-route-id =@Model >Create New</a> 
+    <a asp-controller = "Transactions" asp-action="Create" asp-route-id = "@ViewData["paymentId"]" >Create New</a> 
+    @* poszukać alternatywy dla asp-route.id i wstawić tutaj paymentID z   modelu. ActionLink z  whatsupp   *@
+    
+    @Html.
 </p>
 <table class="table">
     <thead>

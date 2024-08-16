@@ -5,7 +5,6 @@ using RentierApplication.DAL.Entities;
 using RentierApplication.Data;
 using RentierApplication.ViewModels;
 
-
 namespace RentierApplication.Controllers
 {
     public class PaymentsController : Controller
@@ -18,6 +17,7 @@ namespace RentierApplication.Controllers
         }
 
         // GET: Payments
+
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Payments.Include(p => p.RealEstate);
@@ -56,7 +56,6 @@ namespace RentierApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        
         public async Task<IActionResult> Create(PaymentCreateViewModel paymentToAdd)
         {
             var payment = new Payment()
@@ -65,13 +64,11 @@ namespace RentierApplication.Controllers
                 RealEstateId = paymentToAdd.RealEstateId,
                 MonthlyIncome = paymentToAdd.MonthlyIncome,
             };
-         
-                        
-            
-                _context.Add(payment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            
+
+            _context.Add(payment);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
             ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name", payment.RealEstateId);
             return View();
         }
@@ -101,32 +98,23 @@ namespace RentierApplication.Controllers
         public async Task<IActionResult> Edit(int id, PaymentEditViewModel paymentToEdit)
         {
             var existingPayment = await _context.Payments.FindAsync(id);
-            
-            
+
             existingPayment.MonthlyIncome = paymentToEdit.MonthlyIncome;
-
-
-
 
             if (id != existingPayment.Id)
             {
                 return NotFound();
-            }            
-                
-                
-            
+            }
+
             await _context.SaveChangesAsync();
-                
-                
-                
-                    if (!PaymentExists(existingPayment.Id))
-                    {
-                        return NotFound();
-                    }
-                    
-                
-                return RedirectToAction(nameof(Index));
-            
+
+            if (!PaymentExists(existingPayment.Id))
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
+
             ViewData["RealEstateId"] = new SelectList(_context.RealEstates, "ID", "Name", existingPayment.RealEstateId);
             return View(existingPayment);
         }
@@ -143,14 +131,12 @@ namespace RentierApplication.Controllers
                 Id = payment.Id,
                 RealEstateId = payment.RealEstateId,
                 MonthlyIncome = payment.MonthlyIncome,
-
             };
             if (id == null || _context.Payments == null)
             {
                 return NotFound();
             }
 
-            
             if (payment == null)
             {
                 return NotFound();
@@ -170,19 +156,19 @@ namespace RentierApplication.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Payments'  is null.");
             }
-            
+
             if (payment != null)
             {
                 _context.Payments.Remove(payment);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PaymentExists(int id)
         {
-          return (_context.Payments?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Payments?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

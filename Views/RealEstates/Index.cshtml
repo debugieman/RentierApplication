@@ -35,7 +35,10 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                @* <a asp-action="Details" asp-route-id="@item.ID">Details</a> |  *@
+                    @Html.ActionLink("Link to Index action of Home controller with id=100500 and name='John Doe'",
+                             "Details", "RealEstates",
+                             new { realEstateID = item.ID})
                 <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
             </td>
         </tr>

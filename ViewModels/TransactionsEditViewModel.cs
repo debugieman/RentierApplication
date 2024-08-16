@@ -4,7 +4,6 @@ namespace RentierApplication.ViewModels
 {
     public class TransactionsEditViewModel
     {
-        
         public DateTime Date { get; set; } = DateTime.Now;
         public decimal Amount { get; set; }
         public string Description { get; set; }

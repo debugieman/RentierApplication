@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using RentierApplication.Data;
 using RentierApplication.DAL.Entities;
+using RentierApplication.Data;
 using RentierApplication.ViewModels;
 
 namespace RentierApplication.Controllers
@@ -17,32 +17,34 @@ namespace RentierApplication.Controllers
         }
 
         // GET: Transactions
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index(int? paymentId)
         {
-            
-            if (id == null || _context.Payments == null)
+            if (paymentId == null || _context.Transactions == null)
             {
                 return NotFound();
             }
             //zrbić metodę parametryzowaną jak create (int? id )
             //dorzucić where do wczytywania tranzkcji tak aby wyświetlać te które są  powiązane z kontekstem
-            //wyrzucać  błąd  jeśli ID nie jest uzupełniane  
-            //zmienić model używany  na froncie na ekranie index 
-            var applicationDbContext = _context.Transactions.Include(t => t.Payment);
-            if (id == null || _context.Payments == null)
+            //wyrzucać  błąd  jeśli ID nie jest uzupełniane
+            //zmienić model używany  na froncie na ekranie index
+            var applicationDbContext = _context.Transactions.Where(x => x.PaymentId == paymentId);
+            //.Include(t => t.Payment);
+            if (paymentId == null || _context.Payments == null)
             {
                 return NotFound();
             }
+            ViewData["paymentId"] = paymentId;
+
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Transactions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Transactions == null)
-            {
-                return NotFound();
-            }
+            //if (id == null || _context.Transactions == null)
+            //{
+            //    return NotFound();
+            //}
 
             var transaction = await _context.Transactions
                 .Include(t => t.Payment)
@@ -56,19 +58,18 @@ namespace RentierApplication.Controllers
         }
 
         // GET: Transactions/Create/PaymentId
-        
-        public IActionResult Create(int? id)
+        public IActionResult Create(int? paymentId)
         {
             //wyciągnięcie   paymentu  po id  z URL
-            var payment = _context.Payments.Include(i => i.RealEstate).FirstOrDefault(i => i.Id == id);
+            var payment = _context.Payments.Include(i => i.RealEstate).FirstOrDefault(i => i.Id == paymentId);
             //przypisanie do  zmiennej 'payment'  danych na  viewmodel na podastawie payemntu (+domyślny czas )
             TransactionsCreateViewModel viewModel = new TransactionsCreateViewModel();
             viewModel.RealEstateName = payment.RealEstate.Name;
-            viewModel.PaymentId = payment.Id; 
+            viewModel.PaymentId = payment.Id;
             viewModel.DateOfTransaction = DateTime.Now;
-            //wpisanie do ViewBag.TransactionType opcji które będa wyświedtlane jako select 
+            //wpisanie do ViewBag.TransactionType opcji które będa wyświedtlane jako select
             ViewData["TransactionType"] = viewModel.TransactionTypes;
-            //wyświetlenie formuularza utowrzenia transakcji wraz z wpisanymi wcześniej danymi 
+            //wyświetlenie formuularza utowrzenia transakcji wraz z wpisanymi wcześniej danymi
             return View(viewModel);
         }
 
@@ -76,21 +77,28 @@ namespace RentierApplication.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]              
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TransactionsCreateViewModel transactionToAdd)
         {
-            Transaction newTransaction = new Transaction()
-            {                
-                Date = transactionToAdd.DateOfTransaction,
-                Amount = transactionToAdd.Amount,
-                Description = transactionToAdd.Description,
-                Type = MapTransactionType(transactionToAdd.Type),
-                PaymentId = transactionToAdd.PaymentId,
-            };
-               
-            _context.Add(newTransaction);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));                       
+            try
+            {
+                Transaction newTransaction = new Transaction()
+                {
+                    Date = transactionToAdd.DateOfTransaction,
+                    Amount = transactionToAdd.Amount,
+                    Description = transactionToAdd.Description,
+                    Type = MapTransactionType(transactionToAdd.Type),
+                    PaymentId = transactionToAdd.PaymentId,
+                };
+
+                _context.Add(newTransaction);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Transactions/Edit/5
@@ -149,8 +157,6 @@ namespace RentierApplication.Controllers
         // GET: Transactions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-
-           
             if (id == null || _context.Transactions == null)
             {
                 return NotFound();
@@ -181,27 +187,29 @@ namespace RentierApplication.Controllers
             {
                 _context.Transactions.Remove(transaction);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TransactionExists(int id)
         {
-          return (_context.Transactions?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Transactions?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        private TransactionType MapTransactionType (TransactionsCreateViewModel.TransactionType type)
-        { 
+        private TransactionType MapTransactionType(TransactionsCreateViewModel.TransactionType type)
+        {
             switch (type)
             {
                 case TransactionsCreateViewModel.TransactionType.OneTimeExpense:
                     return TransactionType.OneTimeExpense;
-                case TransactionsCreateViewModel.TransactionType.OneTimeIncome: 
+
+                case TransactionsCreateViewModel.TransactionType.OneTimeIncome:
                     return TransactionType.OneTimeIncome;
-                default : 
+
+                default:
                     return TransactionType.OneTimeExpense;
-            }           
+            }
         }
     }
 }

@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using RentierApplication.Data;
 using RentierApplication.DAL.Entities;
+using RentierApplication.Data;
 using RentierApplication.ViewModels;
 
 namespace RentierApplication.Controllers
+//above every controler create a Route attribute with the name of the controller and make sure nested resources are included.
+//Like /RealEstates/Payment/Payemtnid/Transaction/TransactionId
 {
     [Authorize]
     public class RealEstatesController : Controller
@@ -27,22 +29,22 @@ namespace RentierApplication.Controllers
             var userEmail = User.Identity.Name;
 
             var userRealEstates = _context.RealEstates.Include(t => t.Tenants);
-            
+
             return View(await userRealEstates.ToListAsync());
         }
 
+        // https://localhost:44327/RealEstates/Details/RealEstateID?id=2
         // GET: RealEstates/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [Route("/RealEstates/Details")]
+        public async Task<IActionResult> Details(int? realEstateID)
         {
-            
-
-            if (id== null || _context.RealEstates == null)
+            if (realEstateID == null || _context.RealEstates == null)
             {
                 return NotFound();
             }
 
             var realEstate = await _context.RealEstates.Include(t => t.Tenants)
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.ID == realEstateID);
             if (realEstate == null)
             {
                 return NotFound();
@@ -60,7 +62,7 @@ namespace RentierApplication.Controllers
             return View();
         }
 
-        //consider moving this method to tenant controller 
+        //consider moving this method to tenant controller
         //https://localhost:7179/RealEstates/Details/1013
         [Route("/RealEstates/Details/RealEstateID/Tenants")]
         public async Task<IActionResult> Tenants(int? id)
@@ -73,7 +75,7 @@ namespace RentierApplication.Controllers
             var tenants = _context.Tenants
                 .Include(t => t.RealEstateTenant)
                 .Where(m => m.RealEstateID == id);
-            
+
             if (tenants == null)
             {
                 return NotFound();
@@ -82,15 +84,12 @@ namespace RentierApplication.Controllers
             return View(tenants);
         }
 
-
-
         // POST: RealEstates/Create
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        
-        public async Task<IActionResult> Create(RealEstateCreateViewModel  realEstateToAdd )
+        [Route("/RealEstates/Create")]
+        public async Task<IActionResult> Create(RealEstateCreateViewModel realEstateToAdd)
         {
             var realEstate = new RealEstate()
             {
@@ -98,19 +97,18 @@ namespace RentierApplication.Controllers
                 Name = realEstateToAdd.Name,
                 Description = realEstateToAdd.Description,
                 UserId = userManager.GetUserId(User),
-                
-             };       
+            };
 
-            
-           // nie podoba mi sie ta linia, gdzie uzywa sie user id 
+            // nie podoba mi sie ta linia, gdzie uzywa sie user id
             //realEstate.UserId =  StaticData.UserId;
-             _context.RealEstates.Add(realEstate);
+            _context.RealEstates.Add(realEstate);
             await _context.SaveChangesAsync();
-            
+
             return RedirectToAction("Index");
         }
 
         // GET: RealEstates/Edit/5
+        [Route("/RealEstates/Edit/RealEstateID")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.RealEstates == null)
@@ -136,24 +134,22 @@ namespace RentierApplication.Controllers
         {
             var existingRE = await _context.RealEstates.FindAsync(id);
 
-            if (existingRE ==  null) 
+            if (existingRE == null)
             {
                 return NotFound();
             }
-            existingRE.Name =  REToEdit.Name;
-            existingRE.Description = REToEdit.Description;        
-                     
-                                   
+            existingRE.Name = REToEdit.Name;
+            existingRE.Description = REToEdit.Description;
 
             if (ModelState.IsValid)
             {
                 try
-                {                   
+                {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (id!= existingRE.ID)
+                    if (id != existingRE.ID)
                     {
                         return NotFound();
                     }
@@ -166,7 +162,6 @@ namespace RentierApplication.Controllers
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", existingRE.UserId);
             return View(REToEdit);
-        
         }
 
         // GET: RealEstates/Delete/5
@@ -178,7 +173,7 @@ namespace RentierApplication.Controllers
                 return NotFound();
             }
 
-            var realEstate = await _context.RealEstates                
+            var realEstate = await _context.RealEstates
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (realEstate == null)
             {
@@ -187,13 +182,11 @@ namespace RentierApplication.Controllers
 
             RealEstateDeleteViewModel RealEstateToDelete = new RealEstateDeleteViewModel()
             {
-                Name  = realEstate.Name,
+                Name = realEstate.Name,
                 Description = realEstate.Description,
             };
             return View();
         }
-        
-       
 
         // POST: RealEstates/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -204,7 +197,7 @@ namespace RentierApplication.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.RealEstates'  is null.");
             }
-            var realEstate = await _context.RealEstates.FindAsync(id);            
+            var realEstate = await _context.RealEstates.FindAsync(id);
             _context.RealEstates.Remove(realEstate);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

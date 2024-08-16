@@ -36,15 +36,11 @@ namespace RentierApplication
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            
 
             app.UseRouting();
             app.UseEndpoints(endpoint =>
 
             {
-
-
-                
                 app.UseAuthentication();
                 app.UseAuthorization();
 
@@ -54,9 +50,6 @@ namespace RentierApplication
                 app.MapRazorPages();
 
                 app.Run();
-
-
-
             });
         }
     }
