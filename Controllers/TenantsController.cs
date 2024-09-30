@@ -17,7 +17,10 @@ namespace RentierApplication.Controllers
             _context = context;
         }
 
-        // GET: Tenants
+        // GET: ttirbute for this action
+
+        [HttpGet]
+        [Route("/tenants")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Tenants.Include(t => t.RealEstateTenant);

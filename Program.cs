@@ -44,9 +44,14 @@ namespace RentierApplication
                 app.UseAuthentication();
                 app.UseAuthorization();
 
+                //app.MapControllerRoute(
+                //name: "nested",
+                //pattern: "{controller=Payment}/{paymentId}/Transactions/{action=Index}");
+
                 app.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
                 app.MapRazorPages();
 
                 app.Run();

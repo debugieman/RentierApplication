@@ -40,7 +40,14 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a href="@Url.Action("Create", "Transactions", new {PaymentId = ViewData["paymentId"]})">Go list of transactions  for this payment with paymentid !!! </a>
+    <a asp-controller="Transactions" asp-action="Index">List of transactions</a>
+    @* <a asp-action="Index">Back to List of transactions </a> *@
+</div>
+<div>
+    <a href="@Url.Action("Create", "Transactions", new {PaymentId = ViewData["paymentId"]})">Go list of transactions  for this payment with paymentid !!! </a>
+   
+    
 </div>
 
 @section Scripts {

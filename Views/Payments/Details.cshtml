@@ -6,7 +6,14 @@
 
 <h1>Details</h1>
 //tu przekazać id paymentu 
-<a href="@Url.Action("Index", "Tansaction", new {PaymentId = Model.Id})">Go to transactions</a>
+
+<a href="@Url.Action("Index", "Transactions", new {PaymentId = Model.Id})">Go to newTransactions</a>
+
+
+
+ <a href="@Url.Action("Index", "Payments/Transacions", new {PaymentId = Model.Id})">Go to transactionsNEW</a>
+
+ 
 <div>
     <h4>Payment</h4>
     <hr />

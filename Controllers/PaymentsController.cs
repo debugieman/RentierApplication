@@ -7,6 +7,8 @@ using RentierApplication.ViewModels;
 
 namespace RentierApplication.Controllers
 {
+    //create route attribute or this controller
+
     public class PaymentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -74,6 +76,7 @@ namespace RentierApplication.Controllers
         }
 
         // GET: Payments/Edit/5
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Payments == null)
