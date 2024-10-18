@@ -9,11 +9,11 @@
 <p>
 
     <a href="@Url.Action("Create", "Transactions", new {PaymentId = ViewData["paymentId"]})">XXXXXGo to Create a transaction NEW!!! </a>
-    
-     <a asp-controller = "Transactions" asp-action="Create" asp-route-id = "@ViewData["paymentId"]" >Create New</a>  
+
+    <a asp-controller="Transactions" asp-action="Create" asp-route-id="@ViewData["paymentId"]">Create New</a>
     @* poszukać alternatywy dla asp-route.id i wstawić tutaj paymentID z   modelu.   *@
-    
-    
+
+
     @Html.
 </p>
 <table class="table">
@@ -38,29 +38,32 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Payment.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.Id)
+                </td>
+                <td>
+                <a asp-controller="Transactions" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-controller="Nie-Transactions" asp-action="Nie-Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-controller="Transactions" asp-action="Delete" asp-route-id="@item.Id">Delete</a> 
+
+                   @*  <a href="/payments/@item.Id/transactions/edit">poprawny link do edita  </a> *@
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -39,6 +39,7 @@ namespace RentierApplication.Controllers
         }
 
         // GET: Transactions/Details/5
+        [HttpGet]
         [Route("/payments/{paymentId}/transactions/details")]
         public async Task<IActionResult> Details(int? id)
         {
@@ -68,7 +69,7 @@ namespace RentierApplication.Controllers
             //wpisanie do ViewBag.TransactionType opcji które będa wyświedtlane jako select
             ViewData["TransactionType"] = viewModel.TransactionTypes;
             //wyświetlenie formuularza utowrzenia transakcji wraz z wpisanymi wcześniej danymi
-            return View();
+            return View(viewModel);
             //return RedirectToAction(nameof(Index));
         }
 
@@ -101,17 +102,19 @@ namespace RentierApplication.Controllers
             {
             }
 
-            return RedirectToAction(nameof(Index));
+            //return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", new { paymentId = transactionToAdd.PaymentId });
         }
 
         // GET: Transactions/Edit/5
         //create route attirbute for this action with url pattern
-        [Route("/payments/{paymentId}/transactions/edit")]
+        [HttpGet]
+        [Route("/payments/{id}/transactions/edit")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Transactions == null)
             {
-                return NotFound();
+                return NotFound("edit not found");
             }
 
             var transaction = await _context.Transactions.FindAsync(id);
